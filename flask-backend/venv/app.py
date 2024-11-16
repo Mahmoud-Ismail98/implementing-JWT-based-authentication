@@ -58,12 +58,19 @@ def register():
     data = request.json
     username = data.get('username')
     password = data.get('password')
+    role = data.get('role', 'user')  # Assign a default role if not provided
+    department = data.get('department', 'general')  # Assign a default role if not provided
 
     if mongo.db.users.find_one({'username': username}):
         return jsonify({"msg": "User already exists"}), 409
 
     hashed_password = generate_password_hash(password)
-    mongo.db.users.insert_one({'username': username, 'password': hashed_password})
+    mongo.db.users.insert_one(
+        {'username': username, 
+         'password': hashed_password,
+         'role':role,
+         'department':department,
+         })
     return jsonify({"msg": "User created successfully"}), 201
 
 @app.route('/login', methods=['POST'])
@@ -74,7 +81,11 @@ def login():
 
     user = mongo.db.users.find_one({'username': username})
     if user and check_password_hash(user['password'], password):
-        access_token = create_access_token(identity={'username': username}, expires_delta=datetime.timedelta(hours=1))
+        # Include role and department in the JWT token
+        access_token = create_access_token(
+            identity={'username': username, 'role': user['role'], 'department': user['department']},
+            expires_delta=datetime.timedelta(hours=1)
+        )
         return jsonify(access_token=access_token)
     return jsonify({"msg": "Invalid credentials"}), 401
 

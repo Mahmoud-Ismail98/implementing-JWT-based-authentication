@@ -12,6 +12,7 @@ project-root/ ├── backend/ # Backend (Flask) │ ├── app.py # Main a
 - **User Registration**: Allows new users to register with a username and password.
 - **User Login**: Authenticates users and returns a JWT token.
 - **Protected Content**: Access to certain API endpoints is restricted to authenticated users with a valid JWT token.
+- **RBAC & ABAC**: Restrict access based on user roles and attributes.
 
 ## Prerequisites
 
@@ -86,3 +87,29 @@ project-root/ ├── backend/ # Backend (Flask) │ ├── app.py # Main a
     ### Response:
     ### Success: Returns protected content if the token is valid.
     ### Failure: 401 Unauthorized if the token is invalid.
+
+## Extending with RBAC and ABAC
+
+### 1. Role-Based Access Control (RBAC)
+**Objective**: Assign roles (e.g., admin, user, editor) to users and restrict access to endpoints based on roles.
+
+#### Backend Changes:
+- **Define User Roles**:
+  ```json
+  {
+    "username": "mahmoud",
+    "password": "hashed_password",
+    "role": "admin"
+  }
+- **Assign Roles:**
+    During user registration, allow a role to be assigned or set a default role (e.g., user) if no role is provided
+
+- ### 2.Attribute-Based Access Control (ABAC):
+**Objective**: Grant or restrict access based on specific user attributes or environmental conditions (e.g., age, department, time of request).
+  ```json
+  {
+    "username": "mahmoud",
+    "password": "hashed_password",
+    "role": "admin",
+    "department": "R&D"
+  }
